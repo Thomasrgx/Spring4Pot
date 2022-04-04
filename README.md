@@ -1,4 +1,4 @@
-# Log4Pot
+# Spring4Pot
 
 A honeypot for the Spring4Shell vulnerability.
 
