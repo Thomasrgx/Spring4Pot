@@ -20,7 +20,7 @@ except ImportError:
         file=sys.stderr
     )
 
-re_exploit = re.compile("class\.module\.classLoader")
+re_exploit = re.compile("class\.module\.classLoader.*")
 
 @dataclass
 class Logger:
@@ -53,7 +53,7 @@ class Logger:
             self.blob.append_block(j)
 
     def log_start(self):
-        self.log("start", "Log4Pot started")
+        self.log("start", "Spring4Pot started")
 
     def log_request(self, server_port, client, port, request, headers, uuid):
         self.log("request", "A request was received", correlation_id=str(uuid), server_port=server_port, client=client, port=port, request=request, headers=dict(headers))
@@ -71,7 +71,7 @@ class Logger:
         self.log_end()
         self.f.close()
 
-class Log4PotHTTPRequestHandler(BaseHTTPRequestHandler):
+class Spring4PotHTTPRequestHandler(BaseHTTPRequestHandler):
     def do(self):
         # If a custom server header is set, overwrite the version_string() function
         if self.server.server_header:
@@ -98,16 +98,16 @@ class Log4PotHTTPRequestHandler(BaseHTTPRequestHandler):
         else:
             return super().__getattribute__(__name)
 
-class Log4PotHTTPServer(ThreadingHTTPServer):
+class Spring4PotHTTPServer(ThreadingHTTPServer):
     def __init__(self, logger : Logger, *args, **kwargs):
         self.logger = logger
         self.server_header = kwargs.pop("server_header", None)
         super().__init__(*args, **kwargs)
 
-class Log4PotServerThread(Thread):
+class Spring4PotServerThread(Thread):
     def __init__(self, logger : Logger, port : int, *args, **kwargs):
         self.port = port
-        self.server = Log4PotHTTPServer(logger, ("", port), Log4PotHTTPRequestHandler, server_header=kwargs.pop("server_header", None))
+        self.server = Spring4PotHTTPServer(logger, ("", port), Spring4PotHTTPRequestHandler, server_header=kwargs.pop("server_header", None))
         super().__init__(name=f"httpserver-{port}", *args, **kwargs)
 
     def run(self):
@@ -119,11 +119,11 @@ class Log4PotServerThread(Thread):
         except Exception as e:
             logger.log_exception(e)
 
-class Log4PotArgumentParser(ArgumentParser):
+class Spring4PotArgumentParser(ArgumentParser):
     def convert_arg_line_to_args(self, arg_line: str) -> List[str]:
         return arg_line.split()
 
-argparser = Log4PotArgumentParser(
+argparser = Spring4PotArgumentParser(
     description="A honeypot for the Spring4Shell vulnerability.",
     fromfile_prefix_chars="@",
     )
@@ -138,7 +138,7 @@ args = argparser.parse_args()
 
 logger = Logger(args.log, args.blob_connection_string, args.log_container, args.log_blob)
 threads  = [
-    Log4PotServerThread(logger, port, server_header=args.server_header)
+    Spring4PotServerThread(logger, port, server_header=args.server_header)
     for port in args.port
 ]
 logger.log_start()
