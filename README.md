@@ -1,38 +1,21 @@
 # Log4Pot
 
-A honeypot for the Log4Shell vulnerability (CVE-2021-44228).
+A honeypot for the Spring4Shell vulnerability.
 
 ## Features
 
-* Listen on various ports for Log4Shell exploitation.
+* Listen on various ports for Spring4Shell exploitation.
 * Detect exploitation in request line and headers.
-* Log to file and Azure blob storage.
 
 ## Usage
 
-1. Install PIP: `apt install python3-pip`
-2. Install Azure: `apt install azure`
-3. Install Poetry: `pip3 install poetry`
-4. Fetch this GitHub repository `git clone https://github.com/Thomasrgx/Log4Pot.git`
-5. Change directory into the local copy with `cd Log4Pot`
-6. Install dependencies: `poetry install`
-7. Put parameters into log4pot.conf.
-8. Run: `poetry run python log4pot.py @log4pot.conf`
+1. Fetch this GitHub repository `git clone https://github.com/Thomasrgx/Spring4Pot.git`
+2. Change directory into the local copy with `cd Spring4Pot`
+3. Add execution permission to deply_spring4pot.sh: `chmod +x deploy_spring4pot.py`
+4. Execute it: `sudo ./deploy_spring4pot.py`
+5. Test if the server works properly: `curl http://localhost`
 
-Alternatively, you can also run log4pot without external dependencies:
+If the honeypot is working, you should have a basic answer with a random ID generated. If not, try to run this command in /opt/Spring4Pot/:
 ```
-$ python log4pot.py @log4pot.conf
-```
-This will run log4pot without support for logging to Azure blob storage.
-
-## Analyzing Logs with JQ
-
-List payloads from exploitation attempts:
-```
-select(.type == "exploit") | .payload
-```
-
-Decode all base64-encoded payloads from JNDI exploit:
-```
-select(.type == "exploit" and (.payload | contains("Base64"))) | .payload | sub(".*/Base64/"; "") | sub ("}$"; "") | @base64d
+$ sudo poetry run python3 spring4pot.py
 ```
