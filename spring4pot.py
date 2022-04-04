@@ -20,7 +20,7 @@ except ImportError:
         file=sys.stderr
     )
 
-re_exploit = re.compile("*class\.module\.classLoader*")
+re_exploit = re.compile("class\.module\.classLoader")
 
 @dataclass
 class Logger:
@@ -65,7 +65,7 @@ class Logger:
         self.log("exception", "Exception occurred", exception=str(e))
 
     def log_end(self):
-        self.log("end", "Log4Pot stopped")
+        self.log("end", "Spring4Pot stopped")
 
     def close(self):
         self.log_end()
@@ -124,11 +124,11 @@ class Log4PotArgumentParser(ArgumentParser):
         return arg_line.split()
 
 argparser = Log4PotArgumentParser(
-    description="A honeypot for the Log4Shell vulnerability (CVE-2021-44228).",
+    description="A honeypot for the Spring4Shell vulnerability.",
     fromfile_prefix_chars="@",
     )
 argparser.add_argument("--port", "-p", nargs="*", type=int, default=[80, 8000, 8008, 8080, 8081, 8983, 9200], help="Listening port")
-argparser.add_argument("--log", "-l", type=str, default="log4pot.log", help="Log file")
+argparser.add_argument("--log", "-l", type=str, default="spring4pot.log", help="Log file")
 argparser.add_argument("--blob-connection-string", "-b", help="Azure blob storage connection string.")
 argparser.add_argument("--log-container", "-lc", default="logs", help="Azure blob container for logs.")
 argparser.add_argument("--log-blob", "-lb", default=socket.gethostname() + ".log", help="Azure blob for logs.")
@@ -145,10 +145,10 @@ logger.log_start()
 
 for thread in threads:
     thread.start()
-    print(f"Started Log4Pot server on port {thread.port}.")
+    print(f"Started Spring4Pot server on port {thread.port}.")
 
 for thread in threads:
     thread.join()
-    print(f"Stopped Log4Pot server on port {thread.port}.")
+    print(f"Stopped Spring4Pot server on port {thread.port}.")
 
 logger.close()
